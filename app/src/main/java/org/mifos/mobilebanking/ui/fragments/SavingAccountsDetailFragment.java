@@ -7,8 +7,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mifos.mobilebanking.R;
 import org.mifos.mobilebanking.api.local.PreferencesHelper;
@@ -28,6 +31,8 @@ import org.mifos.mobilebanking.utils.QrCodeGenerator;
 import org.mifos.mobilebanking.utils.SymbolsUtils;
 import org.mifos.mobilebanking.utils.Toaster;
 import org.mifos.mobilebanking.utils.Utils;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -98,6 +103,11 @@ public class SavingAccountsDetailFragment extends BaseFragment implements Saving
     private Status status;
     private SavingsWithAssociations savingsWithAssociations;
 
+    private Spinner spinner;
+    private String method;
+
+    ArrayList<String> methods;
+
     public static SavingAccountsDetailFragment newInstance(long savingsId) {
         SavingAccountsDetailFragment fragment = new SavingAccountsDetailFragment();
         Bundle args = new Bundle();
@@ -123,6 +133,26 @@ public class SavingAccountsDetailFragment extends BaseFragment implements Saving
         setToolbarTitle(getString(R.string.saving_account_details));
         ButterKnife.bind(this, rootView);
         savingAccountsDetailPresenter.attachView(this);
+
+        spinner=rootView.findViewById(R.id.payment);
+        methods= new ArrayList<>();
+        methods.add("Choose Mode");
+        methods.add("Mpesa");
+        methods.add("Transfer");
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                method=(methods.get(i));
+                // Toast.makeText(getContext(),methods.get(i),Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Toast.makeText(getContext(),"Select a payment Method",Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         if (savedInstanceState == null) {
             savingAccountsDetailPresenter.loadSavingsWithAssociations(savingsId);
@@ -161,10 +191,16 @@ public class SavingAccountsDetailFragment extends BaseFragment implements Saving
      */
     @OnClick(R.id.tv_deposit)
     void deposit() {
+
+
+
         if (status.getActive()) {
-            ((BaseActivity) getActivity()).replaceFragment(SavingsMakeTransferFragment
-                    .newInstance(savingsId, Constants.TRANSFER_PAY_TO), true, R.id.container);
-        } else {
+
+                String account = "S#"+String.valueOf(savingsId);
+                long amount = 0L;
+                ((BaseActivity) getActivity()).replaceFragment(StkPushFragment.newInstance(account,amount), true, R.id.container);
+
+               } else {
             Toaster.show(rootView, getString(R.string.account_not_active_to_perform_deposit));
         }
     }
@@ -177,8 +213,8 @@ public class SavingAccountsDetailFragment extends BaseFragment implements Saving
     void transfer() {
         if (status.getActive()) {
             ((BaseActivity) getActivity()).replaceFragment(SavingsMakeTransferFragment
-                    .newInstance(savingsId, Constants.TRANSFER_PAY_FROM), true, R.id.container);
-        } else {
+                    .newInstance(savingsId, Constants.TRANSFER_PAY_TO), true, R.id.container);
+    } else {
             Toaster.show(rootView, getString(R.string.account_not_active_to_perform_transfer));
         }
     }

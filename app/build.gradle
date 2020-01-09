@@ -1,0 +1,145 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.oss.licenses.plugin'
+
+apply from: '../config/quality/quality.gradle'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "org.mifos.mobilebanking"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled=true
+        // A test runner provided by https://code.google.com/p/android-test-kit/
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        def commonTestDir = 'src/commonTest/java'
+        androidTest {
+            java.srcDir commonTestDir
+        }
+        test {
+            java.srcDir commonTestDir
+        }
+    }
+
+    compileOptions.incremental = false
+
+    lintOptions {
+        abortOnError false
+        disable 'InvalidPackage'
+    }
+    splits {
+        abi {
+            enable gradle.startParameter.taskNames.contains("assembleRelease")
+            reset()
+            include 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'mips', 'mips64', 'x86', 'x86_64'
+            universalApk false
+        }
+    }
+}
+ext.abiCodes = ['arm64-v8a': '1', 'armeabi': '2', 'armeabi-v7a': '3', 'mips': '4', 'mips64': '5',
+                'x86'      : '6', 'x86_64': '7']
+import com.android.build.OutputFile
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def baseVersionCode = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+        if (baseVersionCode != null) {
+            output.versionCodeOverride = Integer.valueOf(baseVersionCode + variant.versionCode)
+        }
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:$rootProject.dbflowVersion"
+    implementation "com.github.Raizlabs.DBFlow:dbflow-core:$rootProject.dbflowVersion"
+    implementation "com.github.Raizlabs.DBFlow:dbflow:$rootProject.dbflowVersion"
+
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:preference-v7:$rootProject.supportLibraryVersion"
+    implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
+    implementation "com.google.android.gms:play-services-gcm:$rootProject.playServicesVersion"
+    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-vector-drawable:$rootProject.supportLibraryVersion"
+    implementation "com.google.android.gms:play-services-oss-licenses:$rootProject.playServicesVersion"
+    //Square dependencies
+    implementation('com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion') {
+        // exclude Retrofit’s OkHttp peer-dependency module and define your own module import
+        exclude module: 'okhttp'
+    }
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp:$rootProject.okHttp3Version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttp3Version"
+
+    //rxjava Dependencies
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
+
+    //Dagger dependencies
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    provided 'javax.annotation:jsr250-api:1.0'                //Required by Dagger2
+
+    //Butter Knife
+    implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+        transitive = true;
+    }
+
+    //qr code
+    implementation "com.google.zxing:core:$rootProject.zxingcoreVersion"
+    implementation "me.dm7.barcodescanner:zxing:$rootProject.zxingbarcodescannerVersion"
+
+    // Unit tests dependencies
+    testImplementation "junit:junit:$rootProject.jUnitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+
+    androidTestImplementation "junit:junit:$rootProject.jUnitVersion"
+    androidTestImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    androidTestImplementation "org.mockito:mockito-android:$rootProject.mockitoVersion"
+    androidTestImplementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    androidTestImplementation("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion") {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    implementation "com.mifos.mobile:mifos-passcode:$mifosPasscodeVersion"
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.chaos.view:pinview:1.3.2'
+    implementation 'com.github.stfalcon:smsverifycatcher:0.3.2'
+
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
+    androidTestImplementation "com.android.support.test:rules:$rootProject.rulesVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+apply plugin: 'com.google.gms.google-services'
+repositories {
+    mavenCentral()
+}

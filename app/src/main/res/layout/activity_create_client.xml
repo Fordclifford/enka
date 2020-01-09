@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/ScrollRegister"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="@style/LinearLayout.Base">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-5dp"
+            android:layout_marginTop="-6dp"
+            android:layout_marginEnd="-5dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:text="Create Account" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+                android:layout_marginTop="20dp"
+                app:errorEnabled="true"
+                android:layout_width="match_parent">
+
+                <EditText
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:inputType="text"
+                    android:id="@+id/et_first_name"
+                    android:hint="@string/first_name"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+               app:errorEnabled="true"
+                android:layout_width="match_parent">
+
+                <EditText
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:inputType="text"
+                    android:id="@+id/et_middle_name"
+                    android:hint="Middle Name"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+                app:errorEnabled="true"
+                android:layout_width="match_parent">
+
+                <EditText
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:inputType="text"
+                    android:id="@+id/et_last_name"
+                    android:hint="@string/last_name"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+                app:errorEnabled="true"
+                android:layout_width="match_parent">
+
+                <EditText
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:inputType="phone"
+                    android:id="@+id/et_phone_number"
+                    android:hint="@string/phone_number"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+                app:errorEnabled="true"
+                android:layout_width="match_parent">
+
+                <EditText
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:inputType="number"
+                    android:hint="ID Number"
+                    android:id="@+id/et_date_birth"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/btn_RegisterClient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="@dimen/login_margin_bottom"
+                android:background="@drawable/blue"
+                android:text="Create client"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>
